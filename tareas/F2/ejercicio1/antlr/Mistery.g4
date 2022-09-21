@@ -3,8 +3,11 @@ grammar Mistery;
 prog:	(Aa)* ;
 
 // Describe con palabras lo que acepta la regla Aa
+//RESPUESTA
+//Acepta letras y dentro en corchetes ya sean letras o numeros pero deben estar dentro
 
 Aa:	ID ('[' (ID | INTEGER) ']') +
+//Aa:	ID ('[' Aa ']') +
     ;
 
 
