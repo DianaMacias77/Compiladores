@@ -13,5 +13,38 @@
 
 # Puedes hacer 1 solo listener e ir guardando en una lista lo que vayas encontrando, para al final imprimirlo,
 # o bien hacer 3 listeners y mandarlos llamar uno tras otro con el objeto walker.
+from antlr4 import *
+from antlr.JavaParserListener import JavaParserListener
+from antlr.JavaLexer import JavaLexer
+from antlr.JavaParser import JavaParser
+import sys
 
+class TreePrinterUno(JavaParserListener):
+    def enterClassDeclaration(self, ctx:JavaParser.ClassDeclarationContext):
+        # nombres de todas las clases
+        print(ctx.identifier().getText())
+class TreePrinterDos(JavaParserListener):
+    def enterMethodDeclaration(self, ctx:JavaParser.MethodDeclarationContext):
+        #imprimir los nombres y tipos de todos los métodos
+        print(ctx.typeTypeOrVoid().getText())
+        print(ctx.identifier().getText())
+class TreePrinterTres(JavaParserListener):
+    def enterStrL(self, ctx: JavaParser.StrLContext):
+        print(ctx.getText())
 
+def main(argv):
+    parser = JavaParser(CommonTokenStream(JavaLexer(FileStream("test.java"))))
+    tree = parser.compilationUnit()
+    print(tree)
+
+    walker=ParseTreeWalker()
+    walker.walk(TreePrinterUno(), tree)
+
+    walker2=ParseTreeWalker()
+    walker2.walk(TreePrinterDos(), tree)
+
+    walker3=ParseTreeWalker()
+    walker3.walk(TreePrinterTres(), tree)
+
+if __name__ == '__main__':
+    main("test.java")

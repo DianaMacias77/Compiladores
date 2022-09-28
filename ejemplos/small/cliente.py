@@ -15,6 +15,7 @@ def main(argv):
     parser = SmallParser(CommonTokenStream(SmallLexer(FileStream(argv[1]))))
     tree = parser.program()
     declarations = DeclareListener()
+    #clase que implementa listener y contiene lo smétodos llamado declarations
 
     walker = ParseTreeWalker()
     walker.walk(declarations, tree)
