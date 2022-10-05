@@ -120,7 +120,7 @@ class Grammar3(GrammarLL):
 
 
 if __name__ == '__main__':
-    #Grammar1().parse('((a+a)+a)')
+    Grammar1().parse('(a+a)')
     #Grammar2().parse('()(())')
-    Grammar3().parse('(i+i)*i')
+    #Grammar3().parse('(i+i)*i')
 
