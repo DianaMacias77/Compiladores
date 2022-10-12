@@ -105,14 +105,14 @@ def test_selftyperedeclared():
 # def test_outofscope():
 #     with pytest.raises(BadVariableName):
 #         c('outofscope.cool')
-#
-# def test_redefinedclass():
-#     with pytest.raises(BadClassName):
-#         c('redefinedclass.cool')
-#
-# def test_returntypenoexist():
-#     with pytest.raises(BadClassName):
-#         c('returntypenoexist.cool')
+
+ def test_redefinedclass():
+     with pytest.raises(BadClassName):
+         c('redefinedclass.cool')
+
+def test_returntypenoexist():
+     with pytest.raises(BadClassName):
+        c('returntypenoexist.cool')
 #
 # def test_selftypebadreturn():
 #     with pytest.raises(SelftypeBadReturn):

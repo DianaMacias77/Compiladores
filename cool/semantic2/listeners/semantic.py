@@ -97,4 +97,17 @@ class SemanticListener(coolListener):
     # Base para el algoritmo bottom-up
     def enterInt(self, ctx:coolParser.IntContext):
         ctx.type = lookupClass('Int')
+    def exitKlass(self, ctx:coolParser.KlassContext):
+        try:
+            ctx.TYPE(0).getText() == lookupClass(ctx.TYPE(0).getText())
+        except KeyError:
+            raise (BadClassName)
+
+    def exitNew(self, ctx: coolParser.NewContext):
+        try:
+            ctx.type = lookupClass(ctx.TYPE().getText())
+        except KeyError:
+            raise (SelftypeBadReturn)
+
+
 
