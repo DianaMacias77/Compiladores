@@ -122,49 +122,49 @@ def test_selftypebadreturn():
         c('selftypebadreturn.cool')
 
 def test_assignnoconform():
-    with pytest.raises(BadType):
+    with pytest.reaises():
         c('assignnoconform.cool')
 
 def test_attrbadinit():
-    with pytest.raises(BadVariableName):
+    with pytest.reaises():
         c('attrbadinit.cool')
 
 def test_attroverride():
-    with pytest.raises(InvalidOverride):
+    with pytest.reaises():
         c('attroverride.cool')
 
 def test_badargs1():
-    with pytest.raises(BadType):
+    with pytest.reaises():
         c('badargs1.cool')
 
 def test_badmethodcallsitself():
-    with pytest.raises(BadType):
+    with pytest.reaises():
         c('badmethodcallsitself.cool')
 
 def test_badstaticdispatch():
-    with pytest.raises(InvalidDispatch):
+    with pytest.reaises():
         c('badstaticdispatch.cool')
 
 def test_dupformals():
-    with pytest.raises(BadVariableName):
+    with pytest.reaises():
         c('dupformals.cool')
 
 def test_letbadinit():
-    with pytest.raises(BadType):
+    with pytest.reaises():
         c('letbadinit.cool')
 
 def test_lubtest():
-    with pytest.raises(BadType):
+    with pytest.reaises():
         c('lubtest.cool')
 
 def test_overridingmethod4():
-    with pytest.raises(InvalidOverride):
+    with pytest.reaises():
         c('overridingmethod4.cool')
 
 def test_signaturechange():
-    with pytest.raises(InvalidOverride):
+    with pytest.reaises():
         c('signaturechange.cool')
 
 def test_trickyatdispatch2():
-    with pytest.raises(MethodDoesNotExist):
+    with pytest.reaises():
         c('trickyatdispatch2.cool')
