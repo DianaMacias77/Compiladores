@@ -11,8 +11,12 @@ class SemanticListener(coolListener):
 
     def exitAttribute(self, ctx: coolParser.AttributeContext):
         #test_anattributenamedself
-        if ctx.ID().getText() == 'self':
-            raise BadAttributeName()
+        try:
+            if not self.scopes[ctx.ID()].conforms(ctx.expre().type):
+                raise BadType
+        except KeyError:
+            raise BadVariableName
+
 
         #test_assignmentnoconform
 
@@ -92,7 +96,7 @@ class SemanticListener(coolListener):
         #¡Este paso es necesario porque en la gramática hay una regla que consolida todas las literales!
         #Es necesario para darles la misma precedencia
         #Descomentar la siguiente línea una vez que los nodos de la regla primary ya tengan tipo
-        #ctx.type = ctx.primary().type
+        ctx.type = ctx.primary().type
         pass
 
     def exitAdd(self, ctx:coolParser.AddContext):
@@ -101,7 +105,13 @@ class SemanticListener(coolListener):
 
     def exitCall(self, ctx:coolParser.CallContext):
         #test_badmethodcallitself
-        pass
+        for x, y in zip(self.klass.lookupMethod(ctx.ID().getText()).params, ctx.params):
+            if x[0] != y.type:
+                raise BadType()
+            if len(method.params) != len(ctx.params):
+                raise SelftypeBadReturn()
+        ctx.type = self.klass.lookupMethod(ctx.ID().getText()).type
+        #ctx.expr(0)  #también puede ser ctx.params
 
     def exitCallobj(self, ctx:coolParser.CallobjContext):
         #test_baddispatch, test_badwhilebody, test_badargs1
@@ -133,6 +143,7 @@ class SemanticListener(coolListener):
 
     def exitAssign(self, ctx:coolParser.AssignContext):
         #test_assignoconform
+
         pass
 
     def exitIf(self, ctx:coolParser.IfContext):
