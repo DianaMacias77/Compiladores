@@ -4,6 +4,7 @@ from antlr.coolParser import coolParser
 from os import getcwd
 
 #from listeners.semantic import SemanticListener
+from listeners.hierarchy import HierarchyListener, HierarchyNamesListener
 from listeners.codegen import CodeGen
 
 PATH=getcwd()
@@ -23,14 +24,16 @@ def compile(file):
     walker = ParseTreeWalker()
 
     #Temporalmente omitimos el análisis semántico
-    #walker.walk(SemanticListener(), tree)
+    walker.walk(HierarchyListener(), tree)
 
-    c = CodeGen(walker, tree)
-    save(c.getText(), file)
+    c = CodeGen(tree, walker)
+    c.generar()
+    save(c.segTexto(), file)
+
 
 def dummy():
     raise SystemExit(1)
 
 
 if __name__ == '__main__':
-    compile('../resources/semantic/input/anattributenamedself.cool')
+    compile('../resources/codegen/input/fibo.cool')
