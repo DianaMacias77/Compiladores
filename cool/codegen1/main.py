@@ -4,8 +4,8 @@ from antlr.coolParser import coolParser
 from os import getcwd
 
 #from listeners.semantic import SemanticListener
-from listeners.hierarchy import HierarchyListener, HierarchyNamesListener
 from listeners.codegen import CodeGen
+from listeners.hierarchy import HierarchyListener
 
 PATH=getcwd()
 
@@ -26,10 +26,10 @@ def compile(file):
     #Temporalmente omitimos el análisis semántico
     walker.walk(HierarchyListener(), tree)
 
-    c = CodeGen(tree, walker)
+    c = CodeGen(walker, tree)
     c.generar()
-    save(c.segTexto(), file)
-
+    #save(c.getText(), file)
+    print(c.result)
 
 def dummy():
     raise SystemExit(1)
