@@ -19,15 +19,20 @@ class Literales(coolListener):
 
     def enterInt(self, ctx:coolParser.IntContext):
         self.result += cTplInt.substitute(idx=self.idx, tag=2, value=ctx.getText())
+        ctx.constantIdx = self.idx
         self.idx = self.idx + 1
+
 
     def enterStr(self, ctx:coolParser.StrContext):
-        self.result += cTplInt.substitute(idx=self.idx, tag=2, value=len(ctx.getText()))
+        strValue = ctx.getText()[1:-1]
+        self.result += cTplInt.substitute(idx=self.idx, tag=2, value=len(strValue()))
         self.idx = self.idx + 1
 
-        self.result += cTplStr.substitute(idx=self.idx, tag=3, size=4+(len(ctx.getText())+1)%4,
-                                          sizeIdx=(self.idx-1), value=ctx.getText())
+        self.result += cTplStr.substitute(idx=self.idx, tag=3, size=4+(len(strValue())+1)%4,
+                                          sizeIdx=(self.idx-1), value=strValue())
+        ctx.constantIdx = self.idx
         self.idx = self.idx + 1
+
 
 
 class CodeGen():
@@ -45,42 +50,55 @@ class CodeGen():
         literales = Literales()
         self.walker.walk(literales, self.tree)
 
+        # nombre de todas las clases, #direccion de objetos modelo como template, itera sobre lista de clases y el init, #itera sobre las clases y después por cada nombre de metodos que hay en la clase incluyendo herencia, #itera sobre cada objeto y cada
         self.result = literales.result +\
-                      self.tablaNombres() +\
+                      self.tablaNombres(literales.idx) +\
                       self.tablaModelosConstructores() +\
                       self.tablaMetodos() +\
                       self.objetosModelos()
 
-    def tablaNombres(self):
+    def tablaNombres(self,idx):
         r = "class_nameTab:\n"
         for k in allClasses().values():
-            self.result += cTplInt.substitute(idx=self.idx, tag=2, value=len(k.name))
-            self.idx = self.idx + 1
+            self.result += cTplInt.substitute(idx=idx, tag=2, value=len(k.name))
+            idx = idx + 1
 
-            self.result += cTplStr.substitute(idx=self.idx, tag=3, size=4 + (len(k.name) + 1) % 4,
-                                              sizeIdx=(self.idx - 1), value=k.name)
-            r += "    .word str_const{}\n".format(self.idx)
-            self.idx = self.idx + 1
-
+            self.result += cTplStr.substitute(idx=idx, tag=3, size=4 + (len(k.name) + 1) % 4,
+                                              sizeIdx=(idx - 1), value=k.name)
+            r += "    .word str_const{}\n".format(idx)
+            idx = idx + 1
         return r
 
     def tablaModelosConstructores(self):
-        return ""
+    #no se ha generado, se debe generar la tabla class_objTab y conctatenar protObj y Init
+    # LISTOOOO :D
+        r = ""
+        for k in allClasses().values():
+            r += k.name + "_protObj:\n"
+            r += "  .word {}.{}\n".format(k.name,k)
+            r += k.name + "_init:\n"
+            r += "  .word {}.{}\n".format(k.name, k)
+            r += "  .word {}.{}\n".format(k.name, k)
+        return r
 
     def tablaMetodos(self):
         r = ""
         for k in allClasses().values():
             r += k.name + "_dispTab:\n"
             for k1 in k.methods:
+                #indices y encontrar los valores por herencia
+                #iterar sobre cada clase y luego sobres sus métodos, INCLUYENDO HERENCIA
                 r += "    .word {}.{}\n".format(k.name, k1)
-
         return r
 
     def objetosModelos(self):
-        for k in allClasses():
-            pass
-
-        return ""
+        r = ""
+        for k in allClasses().values():
+            r += k.name + "_modelObj:\n"
+            #imprimirlos y que cambien acorde a sus atributos, conteo de atributos o features (así se llaman) y se ponen ceros para cada clase
+            for k1 in k.attributes:
+                r+= "    .word {}.{}\n".format(k.name, k1,0)
+        return r
 
     def segTexto(self):
         pass

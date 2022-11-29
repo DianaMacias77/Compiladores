@@ -47,6 +47,7 @@ class Klass():
         self.attributes = SymbolTable()
         self.methods = SymbolTable()
         _allClasses[name] = self
+        #AQUI SE HACE LA PILA PARA ORDENARLOS CORRECTAMENTE
 
     def validHierarchy(self):
         up = self.inherits
