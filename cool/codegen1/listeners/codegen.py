@@ -1,7 +1,7 @@
 from antlr.coolListener import coolListener
 from antlr.coolParser import coolParser
 from util.asm import *
-from util.structure import allClasses
+from util.structure import allClasses, lookupClass
 
 """
 Los tipos quedarán así:
@@ -72,12 +72,11 @@ class CodeGen():
     def tablaModelosConstructores(self):
     #no se ha generado, se debe generar la tabla class_objTab y conctatenar protObj y Init
     # LISTOOOO :D
-        r = ""
+        r = "class_objTab:\n"
         for k in allClasses().values():
             r += k.name + "_protObj:\n"
-            r += "  .word {}.{}\n".format(k.name,k)
-            r += k.name + "_init:\n"
             r += "  .word {}.{}\n".format(k.name, k)
+            r += k.name + "_init:\n"
             r += "  .word {}.{}\n".format(k.name, k)
         return r
 
@@ -89,15 +88,17 @@ class CodeGen():
                 #indices y encontrar los valores por herencia
                 #iterar sobre cada clase y luego sobres sus métodos, INCLUYENDO HERENCIA
                 r += "    .word {}.{}\n".format(k.name, k1)
+            k = lookupClass(k.inherits)
         return r
 
     def objetosModelos(self):
-        r = ""
+        r = "_protObj:\n"
+        idx=0
         for k in allClasses().values():
-            r += k.name + "_modelObj:\n"
+            if k.name != "Main":
+                r += k.substitute(name="{}_protObj".format(k.name),tag=idx, size=3 +len(k.attributes), name_dispTab="{}_dispTab".format(k.name))
             #imprimirlos y que cambien acorde a sus atributos, conteo de atributos o features (así se llaman) y se ponen ceros para cada clase
-            for k1 in k.attributes:
-                r+= "    .word {}.{}\n".format(k.name, k1,0)
+            r+= "    .word 0\n"
         return r
 
     def segTexto(self):
